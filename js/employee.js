@@ -7,7 +7,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("form-request-edit").addEventListener("submit", async (e) => {
     e.preventDefault();
     const email = localStorage.getItem("employee_email");
-    const date = document.getElementById("request-date").value;
+    const rawDate = document.getElementById("request-date").value;
+    const date = new Date(rawDate).toISOString();
+
     const reason = document.getElementById("request-reason").value;
 
     await axios.post("/employee/request_change", {

@@ -1,11 +1,12 @@
 document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
+    const BASE_URL = 'http://168.138.145.22:8080';
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
     try {
-        const response = await axios.post('http://localhost:8080/login', { email, password });
+        const response = await axios.post(`${BASE_URL}/login`, { email, password });
 
         if (response.status === 200) {
             const data = response.data;

@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+const BASE_URL = 'http://168.138.145.22:8080';
   // Cadastrar Empresa
   const formCompany = document.getElementById("form-company");
   formCompany.addEventListener("submit", async (e) => {
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:8080/admin/create_company", companyData);
+      const response = await axios.post(`${BASE_URL}/admin/create_company`, companyData);
       alert("Empresa cadastrada com sucesso!");
       formCompany.reset();
     } catch (err) {
@@ -40,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      const response = await axios.post("http://localhost:8080/admin/create_manager", managerData);
+      const response = await axios.post(`${BASE_URL}/admin/create_manager`, managerData);
       alert("Gerente cadastrado com sucesso!");
       formManager.reset();
     } catch (err) {
@@ -53,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("btn-load-data").addEventListener("click", async () => {
     try {
       const [companies, managers] = await Promise.all([
-        axios.get("http://localhost:8080/admin/companies"),
-        axios.get("http://localhost:8080/admin/managers"),
+        axios.get(`${BASE_URL}/admin/companies`),
+        axios.get(`${BASE_URL}/admin/managers`),
       ]);
 
       let html = `<h5>Empresas</h5><ul class="list-group mb-3">`;
