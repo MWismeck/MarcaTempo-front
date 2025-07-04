@@ -1,7 +1,7 @@
 document.getElementById('login-form').addEventListener('submit', async (event) => {
     event.preventDefault();
 
-    const BASE_URL = 'https://marcatempo.online';
+    const BASE_URL = 'https://marcatempo.online';    
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
 
