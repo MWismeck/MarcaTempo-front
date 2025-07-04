@@ -1,11 +1,10 @@
-  document.addEventListener("DOMContentLoaded", () => {
-
+document.addEventListener("DOMContentLoaded", () => {
   const employeeList = document.getElementById("employee-list");
   const editFields = document.getElementById("edit-fields");
   const modal = new bootstrap.Modal(document.getElementById("editModal"));
   const exportModal = new bootstrap.Modal(document.getElementById("exportModal"));
   const processModal = new bootstrap.Modal(document.getElementById("processRequestModal"));
-  const BASE_URL = 'https://marcatempo.online';
+  const BASE_URL = 'https://marcatempo.online';   
   let logsCache = [];
   let currentEmail = "";
   let currentRequestId = null;
@@ -79,7 +78,7 @@ async function fetchEmployees() {
 
       console.log("Carregando solicitações para gerente:", managerEmail);
       const res = await axios.get(`${BASE_URL}/manager/requests?manager_email=${encodeURIComponent(managerEmail)}`);
-
+      
       // Verificação de segurança para evitar erros
        const responseData = res.data || {};
        const pending = Array.isArray(responseData.pending) ? responseData.pending : [];
@@ -99,9 +98,9 @@ async function fetchEmployees() {
 
     } catch (err) {
       console.error("Erro ao carregar solicitações:", err);
-      document.getElementById("pending-requests-list").innerHTML =
+      document.getElementById("pending-requests-list").innerHTML = 
         "<tr><td colspan='5' class='text-center text-danger'>Erro ao carregar solicitações.</td></tr>";
-      document.getElementById("history-requests-list").innerHTML =
+      document.getElementById("history-requests-list").innerHTML = 
         "<tr><td colspan='6' class='text-center text-danger'>Erro ao carregar histórico.</td></tr>";
     }
   }
@@ -129,13 +128,13 @@ async function fetchEmployees() {
   // Preencher tabela de solicitações pendentes
   function fillPendingTable(pending) {
     const tbody = document.getElementById("pending-requests-list");
-
+    
     // Verificação de segurança
     if (!pending || !Array.isArray(pending)) {
       tbody.innerHTML = "<tr><td colspan='5' class='text-center'>Nenhuma solicitação pendente.</td></tr>";
       return;
     }
-
+    
     if (pending.length === 0) {
       tbody.innerHTML = "<tr><td colspan='5' class='text-center'>Nenhuma solicitação pendente.</td></tr>";
       return;
@@ -143,13 +142,13 @@ async function fetchEmployees() {
 
     tbody.innerHTML = pending.map(req => {
   const nome = req.funcionario_nome || req.funcionario_email || "Funcionário";
-
-  const dataSolicitada = req.data_solicitada
-    ? new Date(req.data_solicitada).toLocaleDateString('pt-BR')
+  
+  const dataSolicitada = req.data_solicitada 
+    ? new Date(req.data_solicitada).toLocaleDateString('pt-BR') 
     : 'Data inválida';
 
-  const criadoEm = req.CreatedAt
-    ? `${new Date(req.CreatedAt).toLocaleDateString('pt-BR')} ${new Date(req.CreatedAt).toLocaleTimeString('pt-BR')}`
+  const criadoEm = req.CreatedAt 
+    ? `${new Date(req.CreatedAt).toLocaleDateString('pt-BR')} ${new Date(req.CreatedAt).toLocaleTimeString('pt-BR')}` 
     : 'Desconhecido';
 
   const motivo = req.motivo ? req.motivo.replace(/"/g, '&quot;') : 'Sem motivo';
@@ -173,13 +172,13 @@ async function fetchEmployees() {
   // Preencher tabela de histórico
   function fillHistoryTable(processed) {
     const tbody = document.getElementById("history-requests-list");
-
+    
     // Verificação de segurança
     if (!processed || !Array.isArray(processed)) {
       tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Nenhuma solicitação processada.</td></tr>";
       return;
     }
-
+    
     if (processed.length === 0) {
       tbody.innerHTML = "<tr><td colspan='6' class='text-center'>Nenhuma solicitação processada.</td></tr>";
       return;
@@ -188,7 +187,7 @@ async function fetchEmployees() {
     tbody.innerHTML = processed.map(req => {
       const statusClass = req.status === 'aprovado' ? 'text-success' : 'text-danger';
       const statusIcon = req.status === 'aprovado' ? 'fa-check' : 'fa-times';
-
+      
       return `
         <tr>
           <td>${req.funcionario_nome || req.funcionario_email}</td>
@@ -208,12 +207,12 @@ async function fetchEmployees() {
   window.processRequest = async function(requestId) {
     try {
       currentRequestId = requestId;
-
+      
       // Buscar detalhes da solicitação
       const managerEmail = localStorage.getItem("employee_email");
       const res = await axios.get(`${BASE_URL}/manager/requests?manager_email=${encodeURIComponent(managerEmail)}`);
       const pending = Array.isArray(res.data?.pending) ? res.data.pending : [];
-
+      
       const request = pending.find(req => req.ID === requestId);
       if (!request) {
         alert("Solicitação não encontrada.");
@@ -225,7 +224,7 @@ async function fetchEmployees() {
       try {
         const timeLogRes = await axios.get(`${BASE_URL}/time_logs?employee_email=${encodeURIComponent(request.funcionario_email)}`);
         const timeLogs = timeLogRes.data || [];
-
+        
         // Encontrar o registro da data solicitada
         const requestDate = new Date(request.data_solicitada).toISOString().split('T')[0];
         currentTimeLog = timeLogs.find(log => {
@@ -238,19 +237,11 @@ async function fetchEmployees() {
 
       // Analisar o motivo para extrair valores sugeridos
       const suggestedValues = extractSuggestedValues(request.motivo);
-
+      
       // Preencher detalhes no modal
       fillRequestDetails(request, currentTimeLog, suggestedValues);
 
       // Limpar comentário anterior
-      document.querySelector('textarea[name="comentario"]').value = "";
-
-      processModal.show();
-    } catch (err) {
-      console.error("Erro ao carregar detalhes da solicitação:", err);
-      alert("Erro ao carregar detalhes da solicitação.");
-                                                                    
-         // Limpar comentário anterior
       document.querySelector('textarea[name="comentario"]').value = "";
 
       processModal.show();
@@ -263,7 +254,7 @@ async function fetchEmployees() {
   // Função para extrair valores sugeridos do motivo
   function extractSuggestedValues(motivo) {
     const suggested = {};
-
+    
     if (motivo.includes("VALORES CORRETOS SUGERIDOS:")) {
       const lines = motivo.split('\n');
       lines.forEach(line => {
@@ -278,7 +269,7 @@ async function fetchEmployees() {
         }
       });
     }
-
+    
     return suggested;
   }
 
@@ -375,7 +366,7 @@ async function fetchEmployees() {
   // Atualizar status da solicitação
   async function updateRequestStatus(status) {
     const comentario = document.querySelector('textarea[name="comentario"]').value.trim();
-
+    
     if (!comentario || comentario.length < 5) {
       alert("O comentário é obrigatório e deve ter pelo menos 5 caracteres.");
       return;
@@ -383,7 +374,7 @@ async function fetchEmployees() {
 
     try {
       const managerEmail = localStorage.getItem("employee_email");
-
+      
       const body = {
         status: status,
         comentario_gerente: comentario,
@@ -392,11 +383,11 @@ async function fetchEmployees() {
 
       console.log("Processando solicitação:", { requestId: currentRequestId, body });
 
-      await axios.put(`http://168.138.145.22:8080/manager/requests/${currentRequestId}/status`, body);
-
+      await axios.put(`https://marcatempo.online/manager/requests/${currentRequestId}/status`, body);
+      
       alert(`Solicitação ${status} com sucesso!`);
       processModal.hide();
-
+      
       // Recarregar solicitações
       await loadRequests();
 
@@ -404,7 +395,7 @@ async function fetchEmployees() {
       if (status === "aprovado") {
         // Verificar se o usuário quer edição automática
         const autoEdit = document.getElementById("auto-edit-checkbox").checked;
-
+        
         if (autoEdit) {
           // Buscar detalhes da solicitação para obter o email do funcionário
           const managerEmail = localStorage.getItem("employee_email");
@@ -414,11 +405,11 @@ async function fetchEmployees() {
           const allRequests = [...pending, ...processed];
 
           const request = allRequests.find(req => req.ID === currentRequestId);
-
+          
           if (request) {
             // Extrair valores sugeridos novamente
             const suggestedValues = extractSuggestedValues(request.motivo);
-
+            
             setTimeout(() => {
               editLogs(request.funcionario_email, suggestedValues, request.data_solicitada);
             }, 500);
@@ -473,7 +464,7 @@ async function fetchEmployees() {
 
       if (suggestedValues && Object.keys(suggestedValues).length > 0) {
         const baseDate = targetLog.log_date;
-
+        
         if (suggestedValues.entry) {
           entryValue = timeToDatetime(suggestedValues.entry, baseDate);
         }
@@ -486,7 +477,7 @@ async function fetchEmployees() {
         if (suggestedValues.exit) {
           exitValue = timeToDatetime(suggestedValues.exit, baseDate);
         }
-
+        
         prefilledReason = "Alteração aprovada conforme solicitação do funcionário com valores sugeridos.";
       }
 
@@ -496,14 +487,14 @@ async function fetchEmployees() {
             <i class="fas fa-info-circle"></i> <strong>Editando registro de:</strong> ${new Date(targetLog.log_date).toLocaleDateString('pt-BR')}
             ${suggestedValues ? '<br><small><i class="fas fa-lightbulb"></i> Valores sugeridos pelo funcionário foram pré-preenchidos</small>' : ''}
           </div>
-          </div>
+        </div>
         ${formatInput("Entrada", entryValue, "entry_time")}
         ${formatInput("Saída Almoço", lunchExitValue, "lunch_exit_time")}
         ${formatInput("Retorno Almoço", lunchReturnValue, "lunch_return_time")}
         ${formatInput("Saída", exitValue, "exit_time")}
         <div class="col-12 mt-3">
           <label class="form-label"><strong>Motivo da Alteração *</strong></label>
-          <textarea class="form-control" name="motivo_edicao" rows="3" required
+          <textarea class="form-control" name="motivo_edicao" rows="3" required 
                     placeholder="Descreva o motivo da alteração (obrigatório)...">${prefilledReason}</textarea>
         </div>
       `;
@@ -519,7 +510,7 @@ async function fetchEmployees() {
     e.preventDefault();
     const inputs = e.target.elements;
     const managerEmail = localStorage.getItem("employee_email");
-
+    
     // Validação do motivo
     const motivo = inputs.motivo_edicao.value.trim();
     if (!motivo || motivo.length < 5) {
@@ -539,11 +530,11 @@ async function fetchEmployees() {
     try {
       const id = logsCache[0].ID || logsCache[0].id;
       console.log("Enviando edição:", body);
-
+      
       await axios.put(`${BASE_URL}/time_logs/${id}/manual_edit`, body);
       alert("Alterações salvas com sucesso!");
       modal.hide();
-
+      
       // Limpar o formulário
       inputs.motivo_edicao.value = "";
     } catch (err) {
@@ -599,4 +590,3 @@ async function fetchEmployees() {
   fetchEmployees();
   loadRequests();
 });
-
