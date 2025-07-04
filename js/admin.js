@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-const BASE_URL = 'http://168.138.145.22:8080';
+const BASE_URL = 'https://marcatempo.online';
   // Cadastrar Empresa
   const formCompany = document.getElementById("form-company");
   formCompany.addEventListener("submit", async (e) => {
