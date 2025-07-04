@@ -1,0 +1,72 @@
+body {
+  background-color: #f4f6f9;
+  font-family: 'Lato', sans-serif;
+  color: #1f2937;
+}
+
+h1, h2, h3, h4 {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.03);
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+.btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: #2563eb;
+  border: 1px solid #2563eb;
+}
+
+.btn-outline:hover {
+  background-color: #2563eb;
+  color: white;
+}
+
+input.form-control,
+select.form-select {
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.95rem;
+  background-color: white;
+}
+
+input:focus,
+select:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+#status-message {
+  background-color: #e0ecff;
+  color: #1d4ed8;
+  padding: 0.8rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+}

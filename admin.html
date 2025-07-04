@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Administração - Sistema de Ponto</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body class="bg-light">
+
+<div class="container my-4">
+  <h1 class="text-center mb-4 text-primary">Painel Administrativo</h1>
+
+  <!-- Cadastro de Empresa -->
+  <div class="card mb-4">
+    <div class="card-header bg-primary text-white">Cadastrar Empresa</div>
+    <div class="card-body">
+      <form id="form-company" class="row g-3">
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="Nome Fantasia" id="company-name" required />
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="CNPJ" id="company-cnpj" required />
+        </div>
+        <div class="col-md-6">
+          <input type="email" class="form-control" placeholder="Email" id="company-email" required />
+        </div>
+        <div class="col-md-6">
+          <input type="text" class="form-control" placeholder="Telefone" id="company-phone" required />
+        </div>
+        <div class="col-md-6">
+          <select class="form-select" id="company-active">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+          </select>
+        </div>
+        <div class="col-12">
+          <button type="submit" class="btn btn-success">Salvar Empresa</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Cadastro de Gerente -->
+  <div class="card mb-4">
+    <div class="card-header bg-success text-white">Cadastrar Gerente</div>
+    <div class="card-body">
+      <form id="form-manager" class="row g-3">
+        <div class="col-md-6"><input type="text" class="form-control" placeholder="Nome Completo" id="manager-name" required /></div>
+        <div class="col-md-6"><input type="email" class="form-control" placeholder="Email" id="manager-email" required /></div>
+        <div class="col-md-6"><input type="text" class="form-control" placeholder="CPF" id="manager-cpf" required /></div>
+        <div class="col-md-6"><input type="text" class="form-control" placeholder="RG" id="manager-rg" required /></div>
+        <div class="col-md-4"><input type="number" class="form-control" placeholder="Idade" id="manager-age" required /></div>
+        <div class="col-md-4"><input type="number" step="0.1" class="form-control" placeholder="Carga Horária" id="manager-workload" required /></div>
+        <div class="col-md-4">
+          <select class="form-select" id="manager-active">
+            <option value="true">Ativo</option>
+            <option value="false">Inativo</option>
+          </select>
+        </div>
+        <div class="col-md-6"><input type="password" class="form-control" placeholder="Senha" id="manager-password" required /></div>
+        <div class="col-md-6"><input type="text" class="form-control" placeholder="CNPJ da Empresa" id="manager-cnpj" required /></div>
+        <div class="col-12"><button type="submit" class="btn btn-success">Salvar Gerente</button></div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Listagem -->
+  <div class="card mb-4">
+    <div class="card-header bg-secondary text-white">Empresas & Gerentes</div>
+    <div class="card-body">
+      <button class="btn btn-outline-primary mb-3" id="btn-load-data">Carregar Dados</button>
+      <div id="list-data" class="table-responsive"></div>
+    </div>
+  </div>
+  <div class="text-end mb-3">
+  <button id="btn-logout" class="btn btn-outline-danger">Sair</button>
+</div>
+
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
+<script src="js/admin.js"></script>
+
+</body>
+</html>
