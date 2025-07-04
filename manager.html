@@ -1,88 +1,235 @@
+<!DOCTYPE html>
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <title>Administração - Sistema de Ponto</title>
+  <title>Painel do Gerente</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body class="bg-light">
-
 <div class="container my-4">
-  <h1 class="text-center mb-4 text-primary">Painel Administrativo</h1>
+  <!-- Cabeçalho com badge de notificação -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="text-primary">Painel do Gerente</h1>
+    <span class="badge bg-warning fs-6" id="pending-requests-badge" style="display:none;">
+      <i class="fas fa-bell"></i> <span id="pending-count">0</span> solicitações
+    </span>
+  </div>
 
-  <!-- Cadastro de Empresa -->
-  <div class="card mb-4">
-    <div class="card-header bg-primary text-white">Cadastrar Empresa</div>
+  <!-- Botões principais -->
+  <div class="mb-3 d-flex justify-content-between">
+    <button class="btn btn-outline-success" id="btn-export-range">Exportar por Período</button>
+    <button class="btn btn-outline-danger" id="btn-logout">Sair</button>
+  </div>
+
+  <!-- Seção de Solicitações -->
+  <div class="card mt-4">
+    <div class="card-header bg-warning text-dark">
+      <i class="fas fa-clock"></i> Solicitações de Alteração
+    </div>
     <div class="card-body">
-      <form id="form-company" class="row g-3">
-        <div class="col-md-6">
-          <input type="text" class="form-control" placeholder="Nome Fantasia" id="company-name" required />
+      <!-- Abas: Pendentes / Histórico -->
+      <ul class="nav nav-tabs" id="requestTabs">
+        <li class="nav-item">
+          <a class="nav-link active" data-bs-toggle="tab" href="#pending-tab">
+            Pendentes <span class="badge bg-danger" id="pending-tab-count">0</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" data-bs-toggle="tab" href="#history-tab">
+            Histórico <span class="badge bg-secondary" id="history-tab-count">0</span>
+          </a>
+        </li>
+      </ul>
+      
+      <div class="tab-content mt-3">
+        <!-- Aba Pendentes -->
+        <div class="tab-pane active" id="pending-tab">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-warning">
+                <tr>
+                  <th>Funcionário</th>
+                  <!-- <th>Data Solicitada</th> -->
+                  <th>Motivo</th>
+                  <th>Solicitado em</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody id="pending-requests-list">
+                <tr><td colspan="5" class="text-center">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="col-md-6">
-          <input type="text" class="form-control" placeholder="CNPJ" id="company-cnpj" required />
+        
+        <!-- Aba Histórico -->
+        <div class="tab-pane" id="history-tab">
+          <div class="table-responsive">
+            <table class="table table-hover">
+              <thead class="table-secondary">
+                <tr>
+                  <th>Funcionário</th>
+                  <th>Data Solicitada</th>
+                  <th>Status</th>
+                  <th>Processado por</th>
+                  <th>Comentário</th>
+                  <th>Data Processamento</th>
+                </tr>
+              </thead>
+              <tbody id="history-requests-list">
+                <tr><td colspan="6" class="text-center">Carregando...</td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-        <div class="col-md-6">
-          <input type="email" class="form-control" placeholder="Email" id="company-email" required />
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de funcionários -->
+  <div class="card mt-4">
+    <div class="card-header bg-success text-white">Funcionários da Empresa</div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white">
+          <thead class="table-success">
+            <tr>
+              <th>Nome</th>
+              <th>Email</th>
+              <th>Editar Ponto</th>
+            </tr>
+          </thead>
+          <tbody id="employee-list">
+            <tr><td colspan="3" class="text-center">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de edição -->
+<div class="modal fade" id="editModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <form id="edit-form">
+        <div class="modal-header">
+          <h5 class="modal-title">Editar Registros de Ponto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="col-md-6">
-          <input type="text" class="form-control" placeholder="Telefone" id="company-phone" required />
+        <div class="modal-body">
+          <div id="edit-fields" class="row g-3"></div>
         </div>
-        <div class="col-md-6">
-          <select class="form-select" id="company-active">
-            <option value="true">Ativo</option>
-            <option value="false">Inativo</option>
-          </select>
-        </div>
-        <div class="col-12">
-          <button type="submit" class="btn btn-success">Salvar Empresa</button>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Salvar Alterações</button>
         </div>
       </form>
     </div>
   </div>
+</div>
 
-  <!-- Cadastro de Gerente -->
-  <div class="card mb-4">
-    <div class="card-header bg-success text-white">Cadastrar Gerente</div>
-    <div class="card-body">
-      <form id="form-manager" class="row g-3">
-        <div class="col-md-6"><input type="text" class="form-control" placeholder="Nome Completo" id="manager-name" required /></div>
-        <div class="col-md-6"><input type="email" class="form-control" placeholder="Email" id="manager-email" required /></div>
-        <div class="col-md-6"><input type="text" class="form-control" placeholder="CPF" id="manager-cpf" required /></div>
-        <div class="col-md-6"><input type="text" class="form-control" placeholder="RG" id="manager-rg" required /></div>
-        <div class="col-md-4"><input type="number" class="form-control" placeholder="Idade" id="manager-age" required /></div>
-        <div class="col-md-4"><input type="number" step="0.1" class="form-control" placeholder="Carga Horária" id="manager-workload" required /></div>
-        <div class="col-md-4">
-          <select class="form-select" id="manager-active">
-            <option value="true">Ativo</option>
-            <option value="false">Inativo</option>
-          </select>
+<!-- Modal de Aprovação/Rejeição -->
+<div class="modal fade" id="processRequestModal" tabindex="-1">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <form id="process-request-form">
+        <div class="modal-header">
+          <h5 class="modal-title" id="process-modal-title">
+            <i class="fas fa-clipboard-check"></i> Processar Solicitação de Alteração
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
-        <div class="col-md-6"><input type="password" class="form-control" placeholder="Senha" id="manager-password" required /></div>
-        <div class="col-md-6"><input type="text" class="form-control" placeholder="CNPJ da Empresa" id="manager-cnpj" required /></div>
-        <div class="col-12"><button type="submit" class="btn btn-success">Salvar Gerente</button></div>
+        <div class="modal-body">
+          <!-- Detalhes da Solicitação -->
+          <div id="request-details" class="mb-4"></div>
+          
+          <!-- Registro Atual vs Sugerido -->
+          <div class="row mb-4" id="comparison-section" style="display: none;">
+            <div class="col-md-6">
+              <div class="card border-warning">
+                <div class="card-header bg-warning text-dark">
+                  <i class="fas fa-clock"></i> Registro Atual
+                </div>
+                <div class="card-body" id="current-record">
+                  <!-- Será preenchido dinamicamente -->
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                  <i class="fas fa-edit"></i> Valores Sugeridos pelo Funcionário
+                </div>
+                <div class="card-body" id="suggested-record">
+                  <!-- Será preenchido dinamicamente -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Ação Rápida para Aprovação -->
+          <div class="alert alert-info" id="quick-action-info" style="display: none;">
+            <h6><i class="fas fa-lightbulb"></i> Ação Rápida</h6>
+            <p class="mb-2">Se você aprovar esta solicitação, será direcionado automaticamente para editar o registro com os valores sugeridos já preenchidos.</p>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="auto-edit-checkbox" checked>
+              <label class="form-check-label" for="auto-edit-checkbox">
+                Abrir edição automaticamente após aprovação
+              </label>
+            </div>
+          </div>
+
+          <!-- Comentário do Gerente -->
+          <div class="mb-3">
+            <label class="form-label"><strong>Comentário do Gerente *</strong></label>
+            <textarea class="form-control" name="comentario" rows="3" required
+                      placeholder="Adicione um comentário sobre sua decisão. Ex: 'Aprovado conforme justificativa apresentada' ou 'Rejeitado - necessário mais detalhes'"></textarea>
+            <div class="form-text">Este comentário será visível para o funcionário no histórico.</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="fas fa-times"></i> Cancelar
+          </button>
+          <button type="button" class="btn btn-success" id="approve-btn">
+            <i class="fas fa-check"></i> Aprovar Solicitação
+          </button>
+          <button type="button" class="btn btn-danger" id="reject-btn">
+            <i class="fas fa-ban"></i> Rejeitar Solicitação
+          </button>
+        </div>
       </form>
     </div>
   </div>
-
-  <!-- Listagem -->
-  <div class="card mb-4">
-    <div class="card-header bg-secondary text-white">Empresas & Gerentes</div>
-    <div class="card-body">
-      <button class="btn btn-outline-primary mb-3" id="btn-load-data">Carregar Dados</button>
-      <div id="list-data" class="table-responsive"></div>
-    </div>
-  </div>
-  <div class="text-end mb-3">
-  <button id="btn-logout" class="btn btn-outline-danger">Sair</button>
 </div>
 
-
-</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.8/inputmask.min.js"></script>
-<script src="js/admin.js"></script>
+<script src="js/manager.js"></script>
+<div class="modal fade" id="exportModal" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" id="form-export">
+      <div class="modal-header">
+        <h5 class="modal-title">Exportar Período</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label>Funcionário Email</label>
+        <input type="email" class="form-control" id="export-email" required>
+        <label class="mt-2">Data Início</label>
+        <input type="date" class="form-control" id="export-start" required>
+        <label class="mt-2">Data Fim</label>
+        <input type="date" class="form-control" id="export-end" required>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Gerar Planilha</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 </body>
 </html>
-~
