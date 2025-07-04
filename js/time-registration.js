@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+const BASE_URL = 'https://marcatempo.online';
     const employeeEmail = localStorage.getItem("employee_email");
     const employeeName = localStorage.getItem("employee_name");
     const role = localStorage.getItem("role");
@@ -23,7 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Carrega pontos no HTML
     async function carregarPontos() {
         try {
-            const res = await axios.get(`https://marcatempo.online/time_logs?employee_email=${encodeURIComponent(email)}`);
+            const res = await axios.get(`${BASE_URL}/time_logs?employee_email=${encodeURIComponent(email)}`);
             table.innerHTML = "";
 
             if (!res.data || res.data.length === 0) {
@@ -32,15 +33,35 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             res.data.forEach(log => {
+               if (
+        (!log.entry_time || log.entry_time === "0001-01-01T00:00:00Z") &&
+        (!log.exit_time || log.exit_time === "0001-01-01T00:00:00Z") &&
+        (!log.lunch_exit_time || log.lunch_exit_time === "0001-01-01T00:00:00Z") &&
+        (!log.lunch_return_time || log.lunch_return_time === "0001-01-01T00:00:00Z")
+    ) {
+        return;
+    }
                 const row = document.createElement("tr");
-                const logDate = new Date(log.log_date).toLocaleDateString('pt-BR');
+                //const logDate = new Date(log.log_date || log.created.at).toLocaleDateString('pt-BR');
+                 const rawDate = log.log_date && log.log_date !== "0001-01-01T00:00:00Z" 
+                    ? log.log_date 
+                    : log.created_at;
+
+                 const logDate = rawDate ? new Date(rawDate).toLocaleDateString('pt-BR') : "Data inválida";
                 
+
                 // Função para formatar horário com indicação de edição
                 const formatTimeWithEdit = (timeStr, isEdited) => {
-                    if (!timeStr || timeStr === "0001-01-01T00:00:00Z") return "-";
-                    const time = new Date(timeStr).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
-                    return isEdited ? `${time} <span class="text-warning">*</span>` : time;
-                };
+  if (!timeStr || timeStr === "0001-01-01T00:00:00Z") return "-";
+
+  // Evita fuso horário completamente: formata HH:MM direto da string ISO
+  const raw = timeStr.split("T")[1]?.substring(0, 5) || "00:00";
+  const horaMinuto = raw;
+
+  return isEdited ? `${horaMinuto} <span class="text-warning">*</span>` : horaMinuto;
+};
+
+
                 
                 const isEdited = log.editado_por_gerente && log.editado_por_gerente.trim() !== "";
                 
@@ -101,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const statusDiv = document.getElementById("status-message");
                 statusDiv.innerHTML = '<div class="alert alert-info">Registrando ponto...</div>';
                 
-                const res = await axios.put(`https://marcatempo.online/time_logs/1?employee_email=${encodeURIComponent(email)}`);
+                const res = await axios.put(`${BASE_URL}/time_logs/1?employee_email=${encodeURIComponent(email)}`);
                 
                 if (res.status === 200 || res.status === 201) {
                     statusDiv.innerHTML = '<div class="alert alert-success">Ponto registrado com sucesso!</div>';
@@ -125,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const exportBtn = document.getElementById("export-excel-btn");
     if (exportBtn) {
         exportBtn.addEventListener("click", () => {
-            window.open(`https://marcatempo.online/time_logs/export?employee_email=${encodeURIComponent(email)}`, "_blank");
+            window.open(`${BASE_URL}/time_logs/export?employee_email=${encodeURIComponent(email)}`, "_blank");
         });
     }
 
@@ -156,7 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnRequestEdit) {
         btnRequestEdit.addEventListener("click", async () => {
             try {
-                const res = await axios.get(`https://marcatempo.online/time_logs?employee_email=${encodeURIComponent(email)}`);
+                const res = await axios.get(`${BASE_URL}/time_logs?employee_email=${encodeURIComponent(email)}`);
                 
                 if (!res.data || res.data.length === 0) {
                     alert("Você ainda não possui pontos registrados para solicitar alteração.");
@@ -269,7 +290,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                await axios.post("https://marcatempo.online/employee/request_change", {
+                await axios.post(`${BASE_URL}/employee/request_change`, {
                     funcionario_email: email,
                     data_solicitada: new Date(dataSelecionada).toISOString(),
                     motivo: motivoCompleto
