@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Carrega pontos no HTML
     async function carregarPontos() {
         try {
-            const res = await axios.get(`http://localhost:8080/time_logs?employee_email=${encodeURIComponent(email)}`);
+            const res = await axios.get(`https://marcatempo.online/time_logs?employee_email=${encodeURIComponent(email)}`);
             table.innerHTML = "";
 
             if (!res.data || res.data.length === 0) {
@@ -101,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const statusDiv = document.getElementById("status-message");
                 statusDiv.innerHTML = '<div class="alert alert-info">Registrando ponto...</div>';
                 
-                const res = await axios.put(`http://localhost:8080/time_logs/1?employee_email=${encodeURIComponent(email)}`);
+                const res = await axios.put(`https://marcatempo.online/time_logs/1?employee_email=${encodeURIComponent(email)}`);
                 
                 if (res.status === 200 || res.status === 201) {
                     statusDiv.innerHTML = '<div class="alert alert-success">Ponto registrado com sucesso!</div>';
@@ -125,7 +125,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const exportBtn = document.getElementById("export-excel-btn");
     if (exportBtn) {
         exportBtn.addEventListener("click", () => {
-            window.open(`http://localhost:8080/time_logs/export?employee_email=${encodeURIComponent(email)}`, "_blank");
+            window.open(`https://marcatempo.online/time_logs/export?employee_email=${encodeURIComponent(email)}`, "_blank");
         });
     }
 
@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (btnRequestEdit) {
         btnRequestEdit.addEventListener("click", async () => {
             try {
-                const res = await axios.get(`http://localhost:8080/time_logs?employee_email=${encodeURIComponent(email)}`);
+                const res = await axios.get(`https://marcatempo.online/time_logs?employee_email=${encodeURIComponent(email)}`);
                 
                 if (!res.data || res.data.length === 0) {
                     alert("Você ainda não possui pontos registrados para solicitar alteração.");
@@ -269,7 +269,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             try {
-                await axios.post("http://localhost:8080/employee/request_change", {
+                await axios.post("https://marcatempo.online/employee/request_change", {
                     funcionario_email: email,
                     data_solicitada: new Date(dataSelecionada).toISOString(),
                     motivo: motivoCompleto
