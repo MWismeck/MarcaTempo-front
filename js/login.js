@@ -45,3 +45,4 @@ document.getElementById('login-form').addEventListener('submit', async (event) =
         console.error(err);
     }
 });
+
