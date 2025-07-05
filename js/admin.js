@@ -4,6 +4,13 @@ const BASE_URL = 'https://marcatempo.online';
   const formCompany = document.getElementById("form-company");
   formCompany.addEventListener("submit", async (e) => {
     e.preventDefault();
+     const cnpjValue = document.getElementById("company-cnpj").value.trim();
+
+  //  Validação: CNPJ deve conter exatamente 14 dígitos numéricos
+  if (!/^\d{14}$/.test(cnpjValue)) {
+    alert("O CNPJ deve conter exatamente 14 dígitos numéricos.");
+    return;
+  }
 
     const companyData = {
       name: document.getElementById("company-name").value,
